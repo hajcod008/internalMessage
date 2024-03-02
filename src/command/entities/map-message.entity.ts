@@ -26,6 +26,9 @@ export class mapMessageEntity extends BaseEntity {
   @PrimaryColumn({ type: 'uuid' })
   message_id: string;
 
+  @Column({ nullable: true })
+  system_name:string;
+
   @Column({ default: false })
   is_read: boolean;
 
@@ -37,5 +40,6 @@ export class mapMessageEntity extends BaseEntity {
 
   @UpdateDateColumn({ nullable: true })
   updated_at: Date;
+
   message: mapMessageEntity;
 }

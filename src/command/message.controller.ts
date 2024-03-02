@@ -64,11 +64,12 @@ export class MessageController {
   }
 
   @UseGuards(CheckTokenGuard)
-  @Get('get-message/:userId')
+  @Get('get-message/:userId/:system')
   async getMessagge(
     @Param('userId') userId: any,
+    @Param('system') system :string,
   ): Promise<AddAndSendMessageResponseDto> {
-    const result = await this.messageService.getUserMessages(userId);
+    const result = await this.messageService.getUserMessages(userId,system);
     return result as AddAndSendMessageResponseDto;
   }
 
@@ -85,7 +86,6 @@ export class MessageController {
   @Put('update-message/:messageId/')
   async updateMessage(
     @Param('messageId') messageId: any,
-
     @Body() updateMessagess: AddAndSendMessageDto,
   ): Promise<AddAndSendMessageResponseDto> {
     const result = await this.updateMessages.messageUpdate(
@@ -94,4 +94,5 @@ export class MessageController {
     );
     return result as AddAndSendMessageResponseDto;
   }
+  
 }

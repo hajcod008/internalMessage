@@ -9,9 +9,12 @@ import { sendAndsaveMessage } from './messageOnePerson/messageOnePerson';
 import { sendMessageMany } from './messageForMany/send-messageForMany';
 import { deleteMessage } from './deleteMessage/deleteMessage';
 import { updateMessage } from './updateMessage/updateMessage';
+import { SYSTEM } from './entities/systemName.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MessageEntity, mapMessageEntity])],
+  imports: [
+    TypeOrmModule.forFeature([MessageEntity, mapMessageEntity, SYSTEM]),
+  ],
   controllers: [MessageController],
   providers: [
     MessageService,

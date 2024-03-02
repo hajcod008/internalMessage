@@ -4,6 +4,7 @@ import * as passport from 'passport';
 import * as session from 'express-session';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +22,7 @@ async function bootstrap() {
     }),
   );
   const port = process.env.SERVER_PORT;
- // app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(port);
   console.log(`The server listens on port ${port}`);
 }

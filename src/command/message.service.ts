@@ -13,32 +13,32 @@ export class MessageService {
     private readonly mapMessageRepository: Repository<mapMessageEntity>,
   ) {}
 
-  async getUserMessages(userId: string): Promise<any> {
+async getUserMessages(userId: string, system: string): Promise<any> {
     const result = await this.messageRepository
-      .createQueryBuilder('message')
-      .leftJoinAndMapMany(
-        'message.maps',
-        mapMessageEntity,
-        'map_message',
-        'map_message.message_id = message.id AND message.is_deleted = false',
-      )
-      .select(['message', 'map_message.user_id'])
-      .where(
-        'map_message.user_id = :userId OR map_message.user_id =:wildcardUserId AND map_message.is_deleted = false',
-        { userId, wildcardUserId: '*' },
-      )
-      .getMany();
+        .createQueryBuilder('message')
+        .leftJoinAndMapMany(
+            'message.maps',
+            mapMessageEntity,
+            'map_message',
+            'map_message.message_id = message.id AND message.is_deleted = false',
+        )
+        .where(
+            '(map_message.user_id = :userId OR map_message.user_id = :wildcardUserId) AND map_message.system_name = :system AND map_message.is_deleted = false',
+            { userId, wildcardUserId: '*', system },
+        )
+        .select(['message', 'map_message.user_id', 'map_message.system_name'])
+        .getMany();
 
     return result.map((message) => {
-      return {
-        maps: message.maps.map((mapMessage) => ({
-          userId: mapMessage.user_id,
-          message,
-        })),
-      };
+        return {
+            maps: message.maps.map((mapMessage) => ({
+                userId: mapMessage.user_id,
+                system: mapMessage.system_name,
+                message,
+            })),
+        };
     });
-  }
-
+}
 
   async updateMessageReadStatus(id: any): Promise<void> {
     try {
@@ -61,5 +61,4 @@ export class MessageService {
       );
     }
   }
-
 }

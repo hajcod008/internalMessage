@@ -34,6 +34,11 @@ export class AddAndSendMessageDto {
 
   @IsOptional()
   email: string;
+  
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(100)
+  system:string
 }
 
 export class AddAndSendMessageResponseDto {
