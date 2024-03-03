@@ -13,10 +13,9 @@ import { MessageEntity } from './message.entity';
 
 @Entity('map-message')
 export class mapMessageEntity extends BaseEntity {
-  
   @ManyToMany(() => MessageEntity, (message) => message.maps)
   messages: MessageEntity[];
-  
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,12 +24,6 @@ export class mapMessageEntity extends BaseEntity {
 
   @PrimaryColumn({ type: 'uuid' })
   message_id: string;
-
-  @Column({ nullable: true })
-  system_name:string;
-
-  @Column({ default: false })
-  is_read: boolean;
 
   @Column({ default: false })
   is_deleted: boolean;

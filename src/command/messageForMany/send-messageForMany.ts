@@ -24,7 +24,7 @@ export class sendMessageMany {
     private readonly messageService: MessageService,
   ) {}
   async messageForMany(AddAndSendMessageDto: any, userId: any): Promise<any> {
-    const { message_text, Title, mobile_number, system } = AddAndSendMessageDto;
+    const { message_text, Title, system } = AddAndSendMessageDto;
     try {
       const existingSystem = await SYSTEM.findOne({
         where: {
@@ -41,7 +41,7 @@ export class sendMessageMany {
         let message = new MessageEntity();
         message.message_text = message_text;
         message.Title = Title;
-        message.mobile_number = mobile_number;
+        message.system_name = system;
         await queryRunner.manager.save(message);
         var messageId = message.id;
         const allUsers = [];
@@ -52,7 +52,6 @@ export class sendMessageMany {
           let mapM = new mapMessageEntity();
           mapM.message_id = messageId;
           mapM.user_id = userIds;
-          mapM.system_name = system;
           await queryRunner.manager.save(mapM);
         }
         await queryRunner.commitTransaction();

@@ -13,20 +13,14 @@ import { mapMessageEntity } from './map-message.entity';
 
 @Entity('message')
 export class MessageEntity extends BaseEntity {
-    
-    @ManyToMany(() => mapMessageEntity, (map) => map.messages)
-    @JoinTable()
-    maps: mapMessageEntity[];
-
+  @ManyToMany(() => mapMessageEntity, (map) => map.messages)
+  maps: mapMessageEntity[];
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
-  mobile_number: string;
-
   @Column({ nullable: true })
-  email: string;
+  system_name: string;
 
   @Column({ nullable: false })
   Title: string;

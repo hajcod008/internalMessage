@@ -11,6 +11,7 @@ import { deleteMessage } from './deleteMessage/deleteMessage';
 import { updateMessage } from './updateMessage/updateMessage';
 import { SYSTEM } from './entities/systemName.entity';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([MessageEntity, mapMessageEntity, SYSTEM]),
@@ -23,6 +24,7 @@ import { SYSTEM } from './entities/systemName.entity';
     sendMessageMany,
     deleteMessage,
     updateMessage,
+    
   ],
   exports: [MessageService],
 })

@@ -54,7 +54,7 @@ export class updateMessage {
           message.id = messageId;
           message.Title = Title;
           message.message_text = message_text;
-          message.mobile_number = mobile_number;
+         
           await queryRunner.manager.save(message);
 
           await queryRunner.commitTransaction();

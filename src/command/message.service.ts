@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MessageEntity } from './entities/message.entity';
 import { Repository } from 'typeorm';
 import { mapMessageEntity } from './entities/map-message.entity';
+import { InternalServerError } from 'src/common/translate/errors.translate';
 
 @Injectable()
 export class MessageService {
@@ -13,39 +14,72 @@ export class MessageService {
     private readonly mapMessageRepository: Repository<mapMessageEntity>,
   ) {}
 
-async getUserMessages(userId: string, system: string): Promise<any> {
-    const result = await this.messageRepository
+  async getUserMessages(userId: string, system: string): Promise<any> {
+    try {
+      const result = await this.messageRepository
         .createQueryBuilder('message')
         .leftJoinAndMapMany(
-            'message.maps',
-            mapMessageEntity,
-            'map_message',
-            'map_message.message_id = message.id AND message.is_deleted = false',
+          'message.maps',
+          mapMessageEntity,
+          'map_message',
+          'map_message.message_id = message.id AND message.is_deleted = false AND message.system_name = :system ',
         )
         .where(
-            '(map_message.user_id = :userId OR map_message.user_id = :wildcardUserId) AND map_message.system_name = :system AND map_message.is_deleted = false',
-            { userId, wildcardUserId: '*', system },
+          '(map_message.user_id = :userId OR map_message.user_id = :wildcardUserId) AND  map_message.is_deleted = false',
+          { userId, wildcardUserId: '*', system },
         )
-        .select(['message', 'map_message.user_id', 'map_message.system_name'])
+        .select(['message', 'map_message.user_id', 'message.system_name'])
         .getMany();
 
-    return result.map((message) => {
+      return result.map((message) => {
         return {
-            maps: message.maps.map((mapMessage) => ({
-                userId: mapMessage.user_id,
-                system: mapMessage.system_name,
-                message,
-            })),
+          maps: message.maps.map((mapMessage) => ({
+            userId: mapMessage.user_id,
+            system: message.system_name,
+            message,
+          })),
         };
-    });
-}
+      });
+    } catch (error) {
+      if (error.status === undefined) {
+        const formatError = InternalServerError(error.message);
+        throw new HttpException(formatError, formatError.status_code);
+      } else throw error;
+    }
+  }
 
-  async updateMessageReadStatus(id: any): Promise<void> {
+  async getAllmessage(system: string): Promise<any> {
     try {
-      const message = await this.mapMessageRepository.findOne({
+      const result = await this.messageRepository
+        .createQueryBuilder('message')
+        .leftJoinAndMapMany(
+          'message.maps',
+          mapMessageEntity,
+          'map_message',
+          'map_message.message_id = message.id AND message.is_deleted = false',
+        )
+        .where('message.system_name = :system', { system })
+        .select(['message', 'map_message.user_id', 'message.system_name'])
+        .getMany();
+
+      return result.map((message) => {
+        return {
+          message: message,
+        };
+      });
+    } catch (error) {
+      if (error.status === undefined) {
+        const formatError = InternalServerError(error.message);
+        throw new HttpException(formatError, formatError.status_code);
+      } else throw error;
+    }
+  }
+
+  async seenMessage(messageId: any): Promise<any> {
+    try {
+      const message = await this.messageRepository.findOne({
         where: {
-          id: id,
-          is_read: false,
+          id: messageId,
         },
       });
       if (message && !message.is_read) {
@@ -54,6 +88,7 @@ async getUserMessages(userId: string, system: string): Promise<any> {
       } else {
         console.log('Message already read ');
       }
+      return message;
     } catch (error) {
       throw new HttpException(
         error.message || 'Failed to update message read status',

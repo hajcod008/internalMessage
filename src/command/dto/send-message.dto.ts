@@ -1,4 +1,5 @@
 import { Optional } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,43 +9,48 @@ import {
   IsMobilePhone,
   IsEmpty,
   IsOptional,
+  IsUrl,
+  IsString,
 } from 'class-validator';
 
 export class AddAndSendMessageDto {
-  @IsNotEmpty()
-  @MinLength(5)
-  @MaxLength(50)
-  Title: string;
-
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(100)
-  message_text: string;
-
-  @IsNotEmpty()
-  // @IsMobilePhone()
-  @Matches(/^(\+98|0)?9\d{9}$/, { message: 'Mobile number is not valid' })
-  mobile_number: string;
-
-  @IsOptional()
-  image: string;
-
-  @IsOptional()
-  userId: string;
-
-  @IsOptional()
-  email: string;
-  
+  @ApiProperty()
+  @IsString()
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(100)
-  system:string
+  Title: string;
+
+  @ApiProperty({ example: 'test mikonam ' })
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(4)
+  @MaxLength(100)
+  message_text: string;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUrl()
+  image: string;
+
+  @ApiProperty({ example: 'javad' })
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(4)
+  @MaxLength(100)
+  system: string;
 }
 
 export class AddAndSendMessageResponseDto {
+  @ApiProperty()
   success: boolean;
-
-  result;
-  
+  @ApiProperty()
+  @IsString()
+  result:string;
+  @ApiProperty()
+  @IsString()
   message: string;
 }

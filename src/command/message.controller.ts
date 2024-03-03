@@ -31,7 +31,7 @@ export class MessageController {
     private readonly updateMessages: updateMessage,
   ) {}
 
-  @UseGuards(CheckTokenGuard)
+  // @UseGuards(CheckTokenGuard)
   @Post('send-message-all')
   async sendMessageAll(
     @Body() sendMessage: AddAndSendMessageDto,
@@ -40,7 +40,7 @@ export class MessageController {
     return result as AddAndSendMessageResponseDto;
   }
 
-  @UseGuards(CheckTokenGuard)
+  // @UseGuards(CheckTokenGuard)
   @Post('send-message/:userId')
   async sendMessage(
     @Param('userId') userId,
@@ -63,13 +63,31 @@ export class MessageController {
     return result as AddAndSendMessageResponseDto;
   }
 
-  @UseGuards(CheckTokenGuard)
+  //  @UseGuards(CheckTokenGuard)
   @Get('get-message/:userId/:system')
   async getMessagge(
     @Param('userId') userId: any,
-    @Param('system') system :string,
+    @Param('system') system: string,
   ): Promise<AddAndSendMessageResponseDto> {
-    const result = await this.messageService.getUserMessages(userId,system);
+    const result = await this.messageService.getUserMessages(userId, system);
+    return result as AddAndSendMessageResponseDto;
+  }
+
+  @UseGuards(CheckTokenGuard)
+  @Get('getAll-message/:system')
+  async getAllMessagge(
+    @Param('system') system: string,
+  ): Promise<AddAndSendMessageResponseDto> {
+    const result = await this.messageService.getAllmessage(system);
+    return result as AddAndSendMessageResponseDto;
+  }
+
+  //@UseGuards(CheckTokenGuard)
+  @Get('seenMessage/:system')
+  async seenMessagge(
+    @Param('messageId') messageId: any,
+  ): Promise<AddAndSendMessageResponseDto> {
+    const result = await this.messageService.seenMessage(messageId);
     return result as AddAndSendMessageResponseDto;
   }
 
@@ -94,5 +112,6 @@ export class MessageController {
     );
     return result as AddAndSendMessageResponseDto;
   }
-  
+
+
 }
